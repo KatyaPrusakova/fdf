@@ -6,13 +6,11 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/10/20 20:13:00 by eprusako         ###   ########.fr        #
+#    Updated: 2020/10/22 12:55:34 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libftprintf.a
-
-TEST = test #DELETE
+NAME = fdf
 
 LIBFT = ./libft
 LIBFTFLAGS= -L$(LIBFT) -lft
