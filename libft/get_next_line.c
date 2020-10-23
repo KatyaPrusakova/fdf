@@ -6,12 +6,12 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/20 20:10:43 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/20 20:10:44 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/23 11:43:58 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "get_next_line.h"
+#include "libft.h"
 
 /*
 ** this function makes the line in to the line variable given to gnl. First it

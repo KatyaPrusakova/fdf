@@ -6,17 +6,22 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 15:57:09 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/16 12:35:27 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/23 11:29:41 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
+# define BUFF_SIZE 1000
+# define FD_MAX 4096
 
 # include <unistd.h>
 # include <string.h>
 # include <stdlib.h>
 # include <ctype.h>
+# include <fcntl.h>
+
+int		get_next_line(const int fd, char **line);
 
 typedef	struct		s_list
 {
