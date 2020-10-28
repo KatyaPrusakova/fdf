@@ -6,7 +6,7 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/10/28 10:26:34 by eprusako         ###   ########.fr        #
+#    Updated: 2020/10/28 11:56:36 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,9 +30,9 @@ OBJS = $(addprefix $(DIR_OBJ)/, $(SRC:.c=.o))
 all: $(NAME)
 
 $(NAME): $(DIR_OBJ) $(OBJS)
-	@echo $(YELLOW)Compiling libftprintf.a...$(NOCOLOR)
+	@echo $(YELLOW)Compiling FDF...$(NOCOLOR)
 	@make -C $(LIBFT)
-	gcc -g $(DIR_OBJ)/*.o $(MAIN) -o $(NAME)
+	gcc -g $(DIR_OBJ)/*.o libft/libft.a $(MAIN) -o $(NAME)
 
 
 $(DIR_OBJ):
