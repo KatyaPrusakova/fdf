@@ -6,7 +6,7 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/10/23 11:37:52 by eprusako         ###   ########.fr        #
+#    Updated: 2020/10/28 10:26:34 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ all: $(NAME)
 $(NAME): $(DIR_OBJ) $(OBJS)
 	@echo $(YELLOW)Compiling libftprintf.a...$(NOCOLOR)
 	@make -C $(LIBFT)
-	gcc -g $(NAME) $(MAIN)
+	gcc -g $(DIR_OBJ)/*.o $(MAIN) -o $(NAME)
 
 
 $(DIR_OBJ):
