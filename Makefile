@@ -6,7 +6,7 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/10/30 10:41:29 by eprusako         ###   ########.fr        #
+#    Updated: 2020/10/30 16:51:10 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ OBJS = $(addprefix $(DIR_OBJ)/, $(SRC:.c=.o))
 
 all: $(NAME)
 
-$(NAME): $(DIR_OBJ) $(OBJS)
+$(NAME): $(DIR_OBJ) $(OBJS) $(SRCS)
 	@echo $(YELLOW)Compiling FDF...$(NOCOLOR)
 	@make -C $(LIBFT)
 	@gcc -g $(DIR_OBJ)/*.o libft/libft.a -L /usr/local/lib \

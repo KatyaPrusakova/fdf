@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/30 12:01:56 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/30 13:07:55 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 typedef	struct		s_malloc
 {
 	int		**map;
-	char	**save;
 	int			x[BUF];
 	int			y;
 	int			r;
