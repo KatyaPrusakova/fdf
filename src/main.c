@@ -6,11 +6,11 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 10:31:44 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/28 17:54:50 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/30 10:19:54 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/fdf.h"
+#include "fdf.h"
 
 int		main(int argc, char **argv)
 {

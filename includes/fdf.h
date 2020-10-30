@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/28 17:01:26 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/30 12:01:56 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,17 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "../libft/libft.h"
-#define BUF 1000
+
+# include <stdlib.h>
+# include <fcntl.h>
+# include <mlx.h>
+
+# include "../libft/libft.h"
+
+
+# define BUF 1000
+# define WIN_HEIGHT	800
+# define WIN_WIDTH	900
 
 typedef	struct		s_malloc
 {

@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/28 18:04:26 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/30 12:14:30 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,33 @@ static	void	print_map(int j, int i, t_malloc *data)
 		j++;
 		x++;
 	}
+}
+
+/* static int	ft_key(int key)
+{
+	ft_putnbr(key);
+	printf("\n");
+	return (0);
+}
+ */
+
+
+static	int	open_map(int fd, t_malloc *data)
+{
+	void *mlx;
+	void *win;
+
+	mlx = mlx_init();
+	if (mlx == NULL)
+		return (0);
+	data->r = 0;
+	win = mlx_new_window(mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
+/* 	mlx_key_hook(win, &ft_key, (void*)0); */
+	mlx_pixel_put(mlx, win, 100, 100, 0x00FF00);
+	mlx_loop(mlx);
+
+	fd = -fd;
+	return (0);
 }
 
 static	int	add_to_malloc_array(char *map, int ret, int fd, t_malloc *data)
@@ -59,6 +86,7 @@ static	int	add_to_malloc_array(char *map, int ret, int fd, t_malloc *data)
 		}
 		j++;
 	}
+	open_map(fd, data);
 	print_map(0, 0, data);
 	return (0);
 }
@@ -90,12 +118,9 @@ static int		find_xy(int fd, char *argv, t_malloc *data)
 		data->x[data->y] = j;
 		data->y++;
 	}
-	/* printf("find x %d| %d| %d| %d| %d| %d| %d| last row is %d|\n", data->x[0], data->x[1], data->x[2], data->x[3],data->x[4], data->x[5], data->x[6], data->y);
-	*/
 	close(fd);
 	fd = open(argv, O_RDONLY);
 	add_to_malloc_array(m, 0, fd, data);
-
 	return (1);
 }
 
@@ -114,16 +139,13 @@ static void		find_y(int fd, t_malloc *data)
 	printf("find y %d %s\n", data->y, data->map[data->y]);
 }
  */
+
 int		fdf(int fd, char *map)
 {
 	int			j;
 	int			i;
-/* 	char		**save; */
 	t_malloc	data;
 
-	/* save = (char**)malloc(sizeof(char*) * 100);
-	*save = (char*)malloc(sizeof(char) * 100);
-	data.map = *save; */
 	i = 0;
 	j = 0;
 	ft_bzero(&data, sizeof(t_malloc));

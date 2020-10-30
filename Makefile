@@ -6,20 +6,22 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/10/28 11:56:36 by eprusako         ###   ########.fr        #
+#    Updated: 2020/10/30 10:41:29 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 
 LIBFT = ./libft
-LIBFTFLAGS= -L$(LIBFT) -lft
+LIBFTFLAGS= -L ./minilibx -lmlx -L$(LIBFT) -lft
 DIR_SRC = src
 DIR_OBJ = obj_dir
-HEADER = includes
+HEADER = includes/
+FRAMEWORK = -framework OpenGL -framework AppKit
+# MLX=-I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL \
+# -framework Appkit
 
-MAIN =	main.c
-SRC =	fdf.c
+SRC =	fdf.c main.c
 
 YELLOW = "\033[1;33m"
 NOCOLOR = "\033[0m"
@@ -32,14 +34,15 @@ all: $(NAME)
 $(NAME): $(DIR_OBJ) $(OBJS)
 	@echo $(YELLOW)Compiling FDF...$(NOCOLOR)
 	@make -C $(LIBFT)
-	gcc -g $(DIR_OBJ)/*.o libft/libft.a $(MAIN) -o $(NAME)
+	@gcc -g $(DIR_OBJ)/*.o libft/libft.a -L /usr/local/lib \
+	-lmlx -framework OpenGL -framework Appkit -o $(NAME)
 
 
 $(DIR_OBJ):
 	@echo $(YELLOW)Compiling to .o files...$(NOCOLOR)
 	@mkdir $(DIR_OBJ)
 
-$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c $(HEADER)/fdf.h
+$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c $(HEADER)
 	@gcc -g -Wall -Wextra -Werror -I$(HEADER) -c -o $@ $<
 
 clean:
