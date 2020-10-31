@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/30 13:07:55 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/31 12:18:25 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,11 @@
 # define WIN_HEIGHT	800
 # define WIN_WIDTH	900
 
-typedef	struct		s_malloc
+typedef	struct		s_mlx
 {
-	int		**map;
-	int			x[BUF];
-	int			y;
-	int			r;
-}					t_malloc;
+	void		*mlx;
+	void		*win;
+}					t_mlx;
 
 typedef	struct		s_point
 {
@@ -41,6 +39,17 @@ typedef	struct		s_point
 	float			y;
 	float			z;
 }					t_point;
+
+typedef	struct		s_map
+{
+	int		**map;
+	int			x[BUF];
+	int			y;
+	int			r;
+	t_point		coordinates;
+}					t_map;
+
+
 
 int		fdf(int fd, char *map);
 

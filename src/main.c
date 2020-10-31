@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 10:31:44 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/30 10:19:54 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/31 13:30:25 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int		main(int argc, char **argv)
 	{
 		fd = open(argv[1], O_RDONLY);
 		fdf(fd, argv[1]);
+		system("leaks fdf");
 	}
 	else
 	{

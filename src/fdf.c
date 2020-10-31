@@ -6,13 +6,13 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/30 16:50:15 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/10/31 13:57:15 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static	void	print_map(int j, int i, t_malloc *data)
+static	void	print_map(int j, int i, t_map *data)
 {
 	int x;
 
@@ -31,64 +31,81 @@ static	void	print_map(int j, int i, t_malloc *data)
 	}
 }
 
-/* static int	ft_key(int key)
+static int	ft_key(int key)
 {
 	ft_putnbr(key);
 	printf("\n");
+
+	if (key == 53)
+		exit(0);
 	return (0);
 }
- */
 
-/* static	void get_values(float *x,  float *y, t_malloc *data)
+static int	ft_key_mouse(int key, t_map *data)
 {
-get_values(&screen_x, &screen_y, data);
-} */
+	ft_putnbr(key);
+	printf("\n");
 
-static	int	draw_3d(void *mlx, void *win)
+	data->r = data->r + 0;
+	if (key == 5) /* mouse zoom in (re drawing ) */
+		printf("\n");
+	if (key == 4) /* mouse zoom out (re drawing ) */
+		printf("\n");
+	return (0);
+}
+
+static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 {
-	int x;
- 	float start_x = 400;
+	float k;
+	float y;
+	float start_x = 400;
 	float start_y = 400;
-	float end_x = 500;
- 	float end_y = 500 * -1;
+	float new_x = start_x;
+	float new_y = start_y;
 
-	x = 0;
+	end_x = start_x + end_x;
+ 	end_y = start_y + end_y * -1;
 
-	while (start_y > end_y)
+	y = start_y;
+	new_x = end_x - start_x;
+	new_y = end_y - start_y;
+	k = new_x / new_y;
+
+	while (start_x < end_x)
 	{
-		while (start_x < end_x)
-		{
-			
-			mlx_pixel_put(mlx, win, start_x, start_y, 0x00FF00);
-			/* printf("%f %f \n", start_x, start_y); */
-
-			start_x++;
-		}
-		start_y--;
+		mlx_pixel_put(mlx, win, start_x, start_y, 0x00FF00);
+		/* printf("%f %f \n", start_x, start_y); */
+		start_y = start_y + k;
+		start_x++;
 	}
 	return (0);
 }
 
-static	int	open_map(int fd, t_malloc *data)
+static	int	get_new_xyz(t_map *data)
 {
-	void *mlx;
-	void *win;
+	/* draw_line(p.mlx, p.win, data->x[x], s); */
+}
 
-	mlx = mlx_init();
-	if (mlx == NULL)
+static	int	open_map(t_map *data)
+{
+	t_mlx	p;
+
+	data->r = data->r + 0;
+	ft_bzero(&p, sizeof(t_mlx));
+	if (!(p.mlx = mlx_init()))
 		return (0);
-	data->r = 0;
-	win = mlx_new_window(mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
-/* 	mlx_key_hook(win, &ft_key, (void*)0); */
-	draw_3d(mlx, win);
+	p.win = mlx_new_window(p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
 
-	mlx_loop(mlx);
+	mlx_key_hook(p.win, &ft_key, data);
+	mlx_mouse_hook(p.win, &ft_key_mouse, data);
 
-	fd = -fd;
+	get_new_xyz(data);
+
+	mlx_loop(p.mlx);
 	return (0);
 }
 
-static	int	add_to_malloc_array(char *map, int ret, int fd, t_malloc *data)
+static	int	add_to_malloc_array(char *map, int ret, int fd, t_map *data)
 {
 	int		i = 0;
 	int		j = 0;
@@ -116,12 +133,12 @@ static	int	add_to_malloc_array(char *map, int ret, int fd, t_malloc *data)
 		}
 		j++;
 	}
-	open_map(fd, data);
+	open_map(data);
 	print_map(0, 0, data);
 	return (0);
 }
 
-static int		find_xy(int fd, char *argv, t_malloc *data)
+static int		find_xy(int fd, char *argv, t_map *data)
 {
 	char	*m;
 	int		ret;
@@ -172,11 +189,11 @@ int		fdf(int fd, char *map)
 {
 	int			j;
 	int			i;
-	t_malloc	data;
+	t_map	data;
 
 	i = 0;
 	j = 0;
-	ft_bzero(&data, sizeof(t_malloc));
+	ft_bzero(&data, sizeof(t_map));
 	find_xy(fd, map, &data);
 /* 	find_y(fd, data); */
 
