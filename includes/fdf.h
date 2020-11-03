@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/31 12:18:25 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/03 15:53:36 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,10 @@ typedef	struct		s_point
 typedef	struct		s_map
 {
 	int		**map;
-	int			x[BUF];
+	int			x;
 	int			y;
 	int			r;
+	t_mlx		*p;
 	t_point		coordinates;
 }					t_map;
 
