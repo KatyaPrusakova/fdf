@@ -6,12 +6,13 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 11:53:15 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 12:59:27 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
+#define MAX1(a, b) (a > b ? a : b)
 
 static	void	print_map(int j, int i, t_map *data)
 {
@@ -95,6 +96,33 @@ static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 	return (0);
 }
  */
+/* static	int	draw_line_pixel(void *mlx, void *win, float start_x, float start_y, float end_x, float end_y)
+{
+	float max;
+
+	float step_x;
+	float step_y;
+
+	start_x *=20;
+	start_y *=20;
+	end_x *=20;
+	end_y *=20;
+	step_x = end_x - start_x;
+	step_y = end_y - start_y;
+	max = MAX1(step_x, step_y);
+	step_x /= max;
+	step_y /=max;
+
+	while ((int)(start_x - end_x) || (int)(start_y - end_y))
+	{
+		mlx_pixel_put(mlx, win, start_x, start_y, 0x00FF00);
+
+		start_x += step_x;
+		start_y += step_y;
+	}
+	return (1);
+} */
+
 static	int	draw_line_pixel(void *mlx, void *win, float start_x, float start_y, float end_x, float end_y)
 {
 	float k;
@@ -102,6 +130,10 @@ static	int	draw_line_pixel(void *mlx, void *win, float start_x, float start_y, f
 	float new_x;
 	float new_y;
 
+	start_x *=20;
+	start_y *=20;
+	end_x *=20;
+	end_y *=20;
 	y = start_y;
 	new_x = end_x - start_x;
 	new_y = end_y - start_y;
@@ -117,7 +149,8 @@ static	int	draw_line_pixel(void *mlx, void *win, float start_x, float start_y, f
 	return (1);
 }
 
-static	int loop_it(t_mlx *p, t_map *data)
+
+static	int loop_it(t_mlx p, t_map *data)
 {
 	int i;
 	int j = 0;
@@ -128,9 +161,9 @@ static	int loop_it(t_mlx *p, t_map *data)
 		while (i < data->x)
 		{
 			if (i+1 < data->x)
-				draw_line_pixel(p->mlx, p->win, i, j, i+1, j);
+				draw_line_pixel(p.mlx, p.win, i, j, i+1, j);
 			if (j+1 < data->y)
-				draw_line_pixel(p->mlx, p->win, i, j, i, j+1);
+				draw_line_pixel(p.mlx, p.win, i, j, i, j+1);
 			i++;
 		}
 		j++;
@@ -151,7 +184,7 @@ static	int	open_map(t_map *data)
 	mlx_key_hook(p.win, &ft_key, data);
 	mlx_string_put(p.mlx, p.win, 250, 20, 0xFFFFFF,"This shit will never work");
 /* 	draw_line(p.mlx, p.win, data->x, data->y); */
-	loop_it(&p, data);
+	loop_it(p, data);
 	/* draw_line_pixel(p.mlx, p.win, data->x, data->y, 400 + data->x, 400 + data->y); */
 	mlx_loop(p.mlx);
 	return (0);
@@ -211,6 +244,7 @@ static int		find_xy(int fd, char *argv, t_map *data)
 			i++;
 		}
 		data->y++;
+		free(m);
 	}
 	data->x = j;
 	close(fd);
