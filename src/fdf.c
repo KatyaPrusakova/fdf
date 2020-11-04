@@ -6,14 +6,12 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/03 16:26:40 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 11:53:15 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-
-static	int	draw_line(void *mlx, void *win, float end_x, float end_y);
 
 static	void	print_map(int j, int i, t_map *data)
 {
@@ -58,7 +56,7 @@ static int	ft_key_mouse(int key)
 }
  */
 
-
+/*
 static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 {
 
@@ -71,13 +69,6 @@ static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 	end_x = start_x + end_x;
  	end_y = start_y + end_y;
 
-/* 	y = start_y;
-	new_x = end_x - start_x;
-	new_y = end_y - start_y;
-	k = new_x / new_y;
- */
-
-
 	int pixel_bits;
 	int line_pixels;
 	int endian;
@@ -85,36 +76,31 @@ static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 
 	char *buffer = mlx_get_data_addr(image, &pixel_bits, &line_pixels, &endian);
 
-while (start_y < end_y)
-{
-	while ( start_x < end_x)
-		{
-			int pixel = (start_y * line_pixels) + (start_x * 4);
+	while (start_y < end_y)
+	{
+		while ( start_x < end_x)
+			{
+				int pixel = (start_y * line_pixels) + (start_x * 4);
 
-			buffer[pixel + 0] = (color) & 0xFF;
-			buffer[pixel + 1] = (color >> 8) & 0xFF;
-			buffer[pixel + 2] = (color >> 16) & 0xFF;
-			buffer[pixel + 3] = (color >> 24);
-			++start_x;
-		}
-	++start_y;
-}
-mlx_put_image_to_window(mlx, win, image, 400, 400);
+				buffer[pixel + 0] = (color) & 0xFF;
+				buffer[pixel + 1] = (color >> 8) & 0xFF;
+				buffer[pixel + 2] = (color >> 16) & 0xFF;
+				buffer[pixel + 3] = (color >> 24);
+				++start_x;
+			}
+		++start_y;
+	}
+	mlx_put_image_to_window(mlx, win, image, 400, 400);
 
 	return (0);
 }
-
-static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
+ */
+static	int	draw_line_pixel(void *mlx, void *win, float start_x, float start_y, float end_x, float end_y)
 {
 	float k;
 	float y;
-	float start_x = 400;
-	float start_y = 400;
-	float new_x = start_x;
-	float new_y = start_y;
-
-	end_x = start_x + end_x;
- 	end_y = start_y + end_y * -1;
+	float new_x;
+	float new_y;
 
 	y = start_y;
 	new_x = end_x - start_x;
@@ -128,10 +114,29 @@ static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 		start_y = start_y + k;
 		start_x++;
 	}
-	return (0);
+	return (1);
 }
 
+static	int loop_it(t_mlx *p, t_map *data)
+{
+	int i;
+	int j = 0;
 
+	while (j < data->y)
+	{
+		i = 0;
+		while (i < data->x)
+		{
+			if (i+1 < data->x)
+				draw_line_pixel(p->mlx, p->win, i, j, i+1, j);
+			if (j+1 < data->y)
+				draw_line_pixel(p->mlx, p->win, i, j, i, j+1);
+			i++;
+		}
+		j++;
+	}
+	return (0);
+}
 
 static	int	open_map(t_map *data)
 {
@@ -144,12 +149,14 @@ static	int	open_map(t_map *data)
 	p.win = mlx_new_window(p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
 
 	mlx_key_hook(p.win, &ft_key, data);
-
-	draw_line(p.mlx, p.win, data->x, data->y);
-
+	mlx_string_put(p.mlx, p.win, 250, 20, 0xFFFFFF,"This shit will never work");
+/* 	draw_line(p.mlx, p.win, data->x, data->y); */
+	loop_it(&p, data);
+	/* draw_line_pixel(p.mlx, p.win, data->x, data->y, 400 + data->x, 400 + data->y); */
 	mlx_loop(p.mlx);
 	return (0);
 }
+
 
 static	int	add_to_malloc_array(char *map, int ret, int fd, t_map *data)
 {
@@ -173,12 +180,13 @@ static	int	add_to_malloc_array(char *map, int ret, int fd, t_map *data)
 			{
 				data->map[j][i] = ft_atoi(&map[len]);
 				i++;
+				while (ft_isdigit(map[len+1]))
+                    len++;
 			}
 			len++;
 		}
 		j++;
 	}
-
 	print_map(0, 0, data);
 	open_map(data);
 	return (0);
@@ -205,14 +213,11 @@ static int		find_xy(int fd, char *argv, t_map *data)
 		data->y++;
 	}
 	data->x = j;
-
-
 	close(fd);
 	fd = open(argv, O_RDONLY);
 	add_to_malloc_array(m, 0, fd, data);
 	return (1);
 }
-
 
 int		fdf(int fd, char *map)
 {
@@ -224,7 +229,6 @@ int		fdf(int fd, char *map)
 	j = 0;
 	ft_bzero(&data, sizeof(t_map));
 	find_xy(fd, map, &data);
-
 	return (0);
 }
 
