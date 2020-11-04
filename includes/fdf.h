@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 13:58:52 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 16:18:00 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,10 @@ typedef	struct		s_map
 	int		**map;
 	int			x;
 	int			y;
-	int			r;
-	t_mlx		*p;
-	t_point		coordinates;
+	int			z;
+	int			z1;
+	t_mlx		p;
+	t_point		*point;
 }					t_map;
 
 

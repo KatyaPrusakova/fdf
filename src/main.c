@@ -6,24 +6,38 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 10:31:44 by eprusako          #+#    #+#             */
-/*   Updated: 2020/10/31 13:30:25 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 15:44:25 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
+int	print_error(int n)
+{
+	if (n == 0)
+		write(1, "usage ./fdf map.fdf\n", 21);
+	if (n == 1)
+		write(1, "error: file open failed\n", 25);
+	if (n == 2)
+		write(1, "error: too much arguments\n", 27);
+	if (n == 3)
+		write(1, "error: malloc failed\n", 22);
+	exit (0);
+}
+
 int		main(int argc, char **argv)
 {
 	int fd;
 
+	if (argc == 1)
+		print_error(0);
 	if (argc == 2)
 	{
-		fd = open(argv[1], O_RDONLY);
+		if (!(fd = open(argv[1], O_RDONLY)))
+			print_error(1);
 		fdf(fd, argv[1]);
-		system("leaks fdf");
+		system("leaks fdf"); // delete it later
 	}
-	else
-	{
-		return (0);
-	}
+	if (argc > 2)
+		print_error(3);
 }

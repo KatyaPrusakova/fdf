@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 15:02:32 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 16:30:18 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 #define MAX1(a, b) (a > b ? a : b)
 #define MOD(a) (a < 0 ? -a : a)
+
+static	int loop_it(t_map *data);
 
 static	void	print_map(int j, int i, t_map *data)
 {
@@ -30,13 +32,35 @@ static	void	print_map(int j, int i, t_map *data)
 	}
 }
 
-static int	ft_key(int key)
+static int	ft_key(int key, t_map *data)
 {
 	ft_putnbr(key);
 	printf("\n");
 
 	if (key == 53)
 		exit(0);
+/* 	if (key == 124)
+	{
+		move_it(&x, &y, &x1, &y1);
+	} */
+/* 	if (key == 123)
+	{
+		move_it(left);
+	}
+	if (key == 125)
+	{
+		move_it(down);
+	}
+	if (key == 126)
+	{
+		move_it(up);
+	} */
+	if (key == 123 || key == 124 || key == 125 || key == 126)
+	{
+
+		mlx_clear_window(data->p.mlx, data->p.win);
+		loop_it(data);
+	}
 	return (0);
 }
 /*
@@ -98,51 +122,54 @@ static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 }
  */
 
-
  static	void	adding_3d( float *x, float *y, int z, float angle)
 {
 	*x = (*x - *y) * cos(angle);
 	*y = (*x + *y) * sin(angle) - z;
 }
 
-static	int	draw_line_pixel(t_map *data, void *mlx, void *win, float x, float y, float x1, float y1)
+static	void	zoom_in( float *x, float *y, float *x1, float *y1)
+{
+	*x *=20;
+	*y *=20;
+	*x1 *=20;
+	*y1 *=20;
+}
+
+static	void	move_it(float *x, float *y, float *x1, float *y1)
+{
+	*x += 200;
+	*y += 200;
+	*x1 += 200;
+	*y1 += 200;
+}
+
+static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 {
 	float max;
-
 	float step_x;
 	float step_y;
-	int		z;
-	int		z1;
 	int		color;
 
-	z = data->map[(int)y][(int)x];
-	z1 = data->map[(int)y1][(int)x1];
+	data->z = data->map[(int)y][(int)x];
+	data->z1 = data->map[(int)y1][(int)x1];
 
-	color = z ? 0xe80c0c : 0x00FF00;
+	color = data->z ? 0xe80c0c : 0x00FF00;
+	zoom_in(&x, &y, &x1, &y1);
 
-	x *=20;
-	y *=20;
-	x1 *=20;
-	y1 *=20;
 
-	adding_3d(&x, &y, z, 0.8);
-	adding_3d(&x1, &y1, z1, 0.8);
+	adding_3d(&x, &y, data->z, 0.8);
+	adding_3d(&x1, &y1, data->z1, 0.8);
 
-	x += 200;
-	y += 200;
-	x1 += 200;
-	y1 += 200;
-
+	move_it(&x, &y, &x1, &y1);
 	step_x = x1 - x;
 	step_y = y1 - y;
-
 	max = MAX1(MOD(step_x), MOD(step_y));
 	step_x /= max;
 	step_y /=max;
-
 	while ((int)(x - x1) || (int)(y - y1))
 	{
-		mlx_pixel_put(mlx, win, x, y, color);
+		mlx_pixel_put(data->p.mlx, data->p.win, x, y, color);
 		x += step_x;
 		y += step_y;
 	}
@@ -174,7 +201,7 @@ static	int	draw_line_pixel(t_map *data, void *mlx, void *win, float x, float y, 
 	return (1);
 } */
 
-static	int loop_it(t_mlx p, t_map *data)
+static	int loop_it(t_map *data)
 {
 	int i;
 	int j = 0;
@@ -186,9 +213,9 @@ static	int loop_it(t_mlx p, t_map *data)
 		while (i < data->x)
 		{
 			if (i+1 < data->x)
-				draw_line_pixel(data, p.mlx, p.win, i, j, i+1, j);
+				draw_line_pixel(data, i, j, i+1, j);
 			if (j+1 < data->y)
-				draw_line_pixel(data, p.mlx, p.win, i, j, i, j+1);
+				draw_line_pixel(data, i, j, i, j+1);
 			i++;
 		}
 		j++;
@@ -196,20 +223,21 @@ static	int loop_it(t_mlx p, t_map *data)
 	return (0);
 }
 
+static	void mlx_info_display(t_map *data)
+{
+	mlx_string_put(data->p.mlx, data->p.win, 250, 20, 0xFFFFFF,"Look at this amazing project");
+}
+
 static	int	open_map(t_map *data)
 {
-	t_mlx	p;
-
-	data->r = data->r + 0;
-	ft_bzero(&p, sizeof(t_mlx));
-	if (!(p.mlx = mlx_init()))
+	if (!(data->p.mlx = mlx_init()))
 		return (0);
-	p.win = mlx_new_window(p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
+	data->p.win = mlx_new_window(data->p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
+	mlx_key_hook(data->p.win, &ft_key, &data);
+	mlx_info_display(data);
 
-	mlx_key_hook(p.win, &ft_key, data);
-	mlx_string_put(p.mlx, p.win, 250, 20, 0xFFFFFF,"Look at this amazing project");
-	loop_it(p, data);
-	mlx_loop(p.mlx);
+	loop_it(data);
+	mlx_loop(data->p.mlx);
 	return (0);
 }
 
@@ -242,6 +270,7 @@ static	int	add_to_malloc_array(char *map, int ret, int fd, t_map *data)
 			len++;
 		}
 		j++;
+		free(map);
 	}
 	open_map(data);
 	print_map(0, 0, data);
