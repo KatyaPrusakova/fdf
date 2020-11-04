@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 16:51:26 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 19:23:47 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,21 @@
 
 
 # define BUF 1000
-# define WIN_HEIGHT	800
-# define WIN_WIDTH	900
+# define WIN_HEIGHT	1000
+# define WIN_WIDTH	1000
+#define MAX1(a, b) (a > b ? a : b)
+#define MOD(a) (a < 0 ? -a : a)
+
 
 typedef	struct		s_mlx
 {
 	void		*mlx;
 	void		*win;
+	void		*image;
+	int			bits_per_pixel;
+	int			size_line;
+	int			endian;
+	char		*buff;
 }					t_mlx;
 
 typedef	struct		s_point
@@ -49,7 +57,6 @@ typedef	struct		s_map
 	int			z;
 	int			z1;
 	int			offset;
-	
 	t_mlx		p;
 	t_point		*point;
 }					t_map;
