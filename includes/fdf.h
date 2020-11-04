@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/03 15:53:36 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 13:58:52 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <mlx.h>
+# include <math.h>
 
 # include "../libft/libft.h"
 
