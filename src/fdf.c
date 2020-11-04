@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 16:30:18 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/04 17:00:06 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,18 @@ static	void	print_map(int j, int i, t_map *data)
 	}
 }
 
+void	move_it(int key, t_map *data)
+{
+	if (key == 0)
+		data->offset -= 20;
+	if (key == 1)
+		data->offset += 20;
+	if (key == 2)
+		data->offset += 20;
+	if (key == 3)
+		data->offset -= 20;
+}
+
 static int	ft_key(int key, t_map *data)
 {
 	ft_putnbr(key);
@@ -39,25 +51,9 @@ static int	ft_key(int key, t_map *data)
 
 	if (key == 53)
 		exit(0);
-/* 	if (key == 124)
+	if (key >= 123 && key <= 126)
 	{
-		move_it(&x, &y, &x1, &y1);
-	} */
-/* 	if (key == 123)
-	{
-		move_it(left);
-	}
-	if (key == 125)
-	{
-		move_it(down);
-	}
-	if (key == 126)
-	{
-		move_it(up);
-	} */
-	if (key == 123 || key == 124 || key == 125 || key == 126)
-	{
-
+		move_it(126 - key, data);
 		mlx_clear_window(data->p.mlx, data->p.win);
 		loop_it(data);
 	}
@@ -136,12 +132,12 @@ static	void	zoom_in( float *x, float *y, float *x1, float *y1)
 	*y1 *=20;
 }
 
-static	void	move_it(float *x, float *y, float *x1, float *y1)
+static	void	move_it(t_map *data, float *x, float *y, float *x1, float *y1)
 {
-	*x += 200;
-	*y += 200;
-	*x1 += 200;
-	*y1 += 200;
+	*x += data->offset;
+	*y += data->offset;
+	*x1 += data->offset;
+	*y1 += data->offset;
 }
 
 static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
@@ -161,7 +157,7 @@ static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 	adding_3d(&x, &y, data->z, 0.8);
 	adding_3d(&x1, &y1, data->z1, 0.8);
 
-	move_it(&x, &y, &x1, &y1);
+	move_it( data, &x, &y, &x1, &y1);
 	step_x = x1 - x;
 	step_y = y1 - y;
 	max = MAX1(MOD(step_x), MOD(step_y));
@@ -204,9 +200,9 @@ static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 static	int loop_it(t_map *data)
 {
 	int i;
-	int j = 0;
+	int j;
 
-
+	j = 0;
 	while (j < data->y)
 	{
 		i = 0;
@@ -235,7 +231,6 @@ static	int	open_map(t_map *data)
 	data->p.win = mlx_new_window(data->p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
 	mlx_key_hook(data->p.win, &ft_key, &data);
 	mlx_info_display(data);
-
 	loop_it(data);
 	mlx_loop(data->p.mlx);
 	return (0);
