@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 19:23:47 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/06 12:05:59 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,16 @@ typedef	struct		s_map
 
 
 int		fdf(int fd, char *map);
+int		find_xy(int fd, char *argv, t_map *data);
 
+int		open_map(t_map *data);
+void	print_map(int j, int i, t_map *data);
+
+
+int		add_to_malloc_array(char *map, int ret, int fd, t_map *data);
+
+
+void		manage_drawing(t_map *data);
 #endif
+
+

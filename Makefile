@@ -6,7 +6,7 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/10/30 16:51:10 by eprusako         ###   ########.fr        #
+#    Updated: 2020/11/06 12:01:51 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ FRAMEWORK = -framework OpenGL -framework AppKit
 # MLX=-I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL \
 # -framework Appkit
 
-SRC =	fdf.c main.c
+SRC =	fdf.c main.c malloc_array.c
 
 YELLOW = "\033[1;33m"
 NOCOLOR = "\033[0m"
