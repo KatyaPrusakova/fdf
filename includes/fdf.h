@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/06 12:05:59 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/06 18:40:04 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@
 #define MAX1(a, b) (a > b ? a : b)
 #define MOD(a) (a < 0 ? -a : a)
 
+
+
+# define Z_IN	27
+# define Z_OUT	24
+# define UP		126
+# define DOWN	125
+# define RIGHT	124
+# define LEFT	123
 
 typedef	struct		s_mlx
 {
@@ -56,7 +64,9 @@ typedef	struct		s_map
 	int			y;
 	int			z;
 	int			z1;
-	int			offset;
+	int			offset_x;
+	int			offset_y;
+	int			zoom;
 	t_mlx		p;
 	t_point		*point;
 }					t_map;
@@ -67,10 +77,11 @@ int		fdf(int fd, char *map);
 int		find_xy(int fd, char *argv, t_map *data);
 
 int		open_map(t_map *data);
+void	display_map(t_map *data);
 void	print_map(int j, int i, t_map *data);
 
 
-int		add_to_malloc_array(char *map, int ret, int fd, t_map *data);
+int		add_to_malloc_array(char *map, int fd, t_map *data);
 
 
 void		manage_drawing(t_map *data);

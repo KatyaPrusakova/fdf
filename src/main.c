@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 10:31:44 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/04 15:44:25 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/06 18:35:12 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ int		main(int argc, char **argv)
 		if (!(fd = open(argv[1], O_RDONLY)))
 			print_error(1);
 		fdf(fd, argv[1]);
-		system("leaks fdf"); // delete it later
+	 // 	system("leaks fdf");delete it later
 	}
 	if (argc > 2)
-		print_error(3);
+		print_error(2);
 }

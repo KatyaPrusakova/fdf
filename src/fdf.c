@@ -6,42 +6,17 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/06 12:34:53 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/06 18:35:43 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static	int loop_it(t_map *data);
+/* static	int loop_it(t_map *data);
 void display_map(t_map *data);
 
-void	print_map(int j, int i, t_map *data)
-{
-	while (j < data->y)
-	{
-		i = 0;
-		while (i < data->x)
-		{
-			printf("%d ", data->map[j][i]);
-			i++;
-		}
-		printf("\n");
-		j++;
-	}
-}
 
-void	move_it_with_key(int key, t_map *data)
-{
-	if (key == 0)
-		data->offset -= 20;
-	if (key == 1)
-		data->offset += 20;
-	if (key == 2)
-		data->offset += 20;
-	if (key == 3)
-		data->offset -= 20;
-	manage_drawing(data);
-}
+
 
 void		manage_drawing(t_map *data)
 {
@@ -71,10 +46,162 @@ static int	ft_key(int key, t_map *data)
 
 	if (key == 53)
 		exit(0);
-	if (key >= 123 && key <= 126)
+	if (key == DOWN)
 	{
-		move_it_with_key(126 - key, data);
+
+		data->offset_y += 20;
 	}
+	if (key == RIGHT)
+		{
+		data->offset_x += 20;
+
+	}
+	if (key == LEFT)
+	{
+		data->offset_x -= 20;
+
+	}
+	if (key == UP)
+	{
+
+		data->offset_y -= 20;
+	}
+	if (key == 27)
+	{
+		if (data->zoom == 10)
+			return (0);
+		data->zoom -= 10;
+	}
+	if (key == 24)
+		data->zoom += 10;
+	manage_drawing(data);
+	return (0);
+}
+
+ static	void	adding_3d( float *x, float *y, int z, float angle)
+{
+	*x = (*x - *y) * cos(angle);
+	*y = (*x + *y) * sin(angle) - z;
+}
+
+static	void	zoom_in( float *x, float *y, float *x1, float *y1, t_map *data)
+{
+	*x *= data->zoom;
+	*y *= data->zoom;
+	*x1 *= data->zoom;
+	*y1 *= data->zoom;
+}
+
+void		pixel_put(t_map *data, int x, int y, int color)
+{
+	int r;
+	int g;
+	int b;
+
+	if (x <= 0 || y <= 0 || WIN_WIDTH <= x || WIN_HEIGHT <= y)
+		return ;
+	b = color % 256;
+	g = color / 256 % 256;
+	r = color / 256 / 256 % 256;
+	data->p.buff[x * 4 + y * data->p.size_line] = r;
+	data->p.buff[x * 4 + y * data->p.size_line + 1] = g;
+	data->p.buff[x * 4 + y * data->p.size_line + 2] = b;
+}
+
+static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
+{
+	float	max;
+	float	step_x;
+	float	step_y;
+	int		color;
+
+	color = data->z ? 0xe80c0c : 0x00FF00;
+	step_x = x1 - x;
+	step_y = y1 - y;
+	max = MAX1(MOD(step_x), MOD(step_y));
+	step_x /= max;
+	step_y /=max;
+	while ((int)(x - x1) || (int)(y - y1))
+	{
+		pixel_put(data, x, y, color);
+		x += step_x;
+		y += step_y;
+	}
+	return (1);
+}
+
+
+static	void	draw_line_pixel_change(t_map *data, float x, float y, float x1, float y1)
+{
+	zoom_in(&x, &y, &x1, &y1, data);
+	adding_3d(&x, &y, data->z, 0.8);
+	adding_3d(&x1, &y1, data->z1, 0.8);
+	x += data->offset_x;
+	y += data->offset_y;
+	x1 += data->offset_x;
+	y1 += data->offset_y;
+
+	draw_line_pixel(data, x, y, x1, y1);
+}
+static	int loop_it(t_map *data)
+{
+	int i;
+	int j;
+
+	j = 0;
+	while (j < data->y)
+	{
+		i = 0;
+		while (i < data->x)
+		{
+			if (i+1 < data->x)
+			{
+				data->z = data->map[(int)j][(int)i];
+				data->z1 = data->map[(int)j][(int)i + 1];
+				draw_line_pixel_change(data, i, j, i+1, j);
+			}
+			if (j+1 < data->y)
+			{
+				data->z = data->map[(int)j][(int)i];
+				data->z1 = data->map[(int)j+1][(int)i];
+				draw_line_pixel_change(data, i, j, i, j+1);
+			}
+			i++;
+		}
+		j++;
+	}
+	return (0);
+}
+
+void mlx_info_display(t_map *data)
+{
+	mlx_string_put(data->p.mlx, data->p.win, 250, 20, 0xFFFFFF,"Look at this amazing project");
+}
+
+void		display_map(t_map *data)
+{
+	loop_it(data);
+	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
+}
+
+ */
+int		fdf(int fd, char *map)
+{
+	t_map		data;
+
+	ft_bzero(&data, sizeof(t_map));
+	find_xy(fd, map, &data);
+/* 	if (!(data.p.mlx = mlx_init()))
+		return (0);
+	data.p.win = mlx_new_window(data.p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
+	data.p.image = mlx_new_image(data.p.mlx, WIN_WIDTH, WIN_HEIGHT);
+	data.p.buff = mlx_get_data_addr(data.p.image, &data.p.bits_per_pixel, &data.p.size_line, &data.p.endian);
+	mlx_key_hook(data.p.win, &ft_key, &data);
+	mlx_info_display(&data);
+	data.offset_y = 300;
+	data.offset_x = 300;
+	data.zoom = 10;
+	mlx_loop(data.p.mlx); */
 	return (0);
 }
 
@@ -136,131 +263,3 @@ static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
 	return (0);
 }
  */
-
- static	void	adding_3d( float *x, float *y, int z, float angle)
-{
-	*x = (*x - *y) * cos(angle);
-	*y = (*x + *y) * sin(angle) - z;
-}
-
-static	void	zoom_in( float *x, float *y, float *x1, float *y1)
-{
-	*x *=20;
-	*y *=20;
-	*x1 *=20;
-	*y1 *=20;
-}
-
-
-static	void pixel_put(t_map *data, int x, int y, int color)
-{
-	int r;
-	int g;
-	int b;
-
-	if (x <= 0 || y <= 0 || WIN_WIDTH <= x || WIN_HEIGHT <= y)
-		return ;
-	b = color % 256;
-	g = color / 256 % 256;
-	r = color / 256 / 256 % 256;
-	data->p.buff[x * 4 + y * data->p.size_line] = r;
-	data->p.buff[x * 4 + y * data->p.size_line + 1] = g;
-	data->p.buff[x * 4 + y * data->p.size_line + 2] = b;
-}
-
-static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
-{
-	float max;
-	float step_x;
-	float step_y;
-	int		color;
-
-	data->z = data->map[(int)y][(int)x];
-	data->z1 = data->map[(int)y1][(int)x1];
-	data->offset = 300;
-	color = data->z ? 0xe80c0c : 0x00FF00;
-	zoom_in(&x, &y, &x1, &y1);
-
-	adding_3d(&x, &y, data->z, 0.8);
-	adding_3d(&x1, &y1, data->z1, 0.8);
-
-	x += data->offset;
-	y += data->offset;
-	x1 += data->offset;
-	y1 += data->offset;
-
-	step_x = x1 - x;
-	step_y = y1 - y;
-	max = MAX1(MOD(step_x), MOD(step_y));
-	step_x /= max;
-	step_y /=max;
-	while ((int)(x - x1) || (int)(y - y1))
-	{
-		pixel_put(data, x, y, color);
-		x += step_x;
-		y += step_y;
-	}
-	return (1);
-}
-
-static	int loop_it(t_map *data)
-{
-	int i;
-	int j;
-
-	j = 0;
-	while (j < data->y)
-	{
-		i = 0;
-		while (i < data->x)
-		{
-			if (i+1 < data->x)
-				draw_line_pixel(data, i, j, i+1, j);
-			if (j+1 < data->y)
-				draw_line_pixel(data, i, j, i, j+1);
-			i++;
-		}
-		j++;
-	}
-	return (0);
-}
-
-void mlx_info_display(t_map *data)
-{
-	mlx_string_put(data->p.mlx, data->p.win, 250, 20, 0xFFFFFF,"Look at this amazing project");
-}
-
-void display_map(t_map *data)
-{
-	loop_it(data);
-	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
-}
-
-int		open_map(t_map *data)
-{
-	if (!(data->p.mlx = mlx_init()))
-		return (0);
-	data->p.win = mlx_new_window(data->p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
-	mlx_key_hook(data->p.win, &ft_key, &data);
-	data->p.image = mlx_new_image(data->p.mlx, WIN_WIDTH, WIN_HEIGHT);
-	data->p.buff = mlx_get_data_addr(data->p.image, &data->p.bits_per_pixel, &data->p.size_line, &data->p.endian);
-	mlx_info_display(data);
-	display_map(data);
-
-	mlx_loop(data->p.mlx);
-	return (0);
-}
-
-int		fdf(int fd, char *map)
-{
-	int			j;
-	int			i;
-	t_map		data;
-
-	i = 0;
-	j = 0;
-	ft_bzero(&data, sizeof(t_map));
-	find_xy(fd, map, &data);
-	return (0);
-}
-
