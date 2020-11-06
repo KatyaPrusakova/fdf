@@ -6,37 +6,20 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/06 18:35:43 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/06 19:15:29 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-/* static	int loop_it(t_map *data);
+static	int loop_it(t_map *data);
 void display_map(t_map *data);
-
-
-
 
 void		manage_drawing(t_map *data)
 {
 	ft_bzero(data->p.buff, WIN_HEIGHT * WIN_WIDTH * 4);
 	loop_it(data);
 	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
-}
-
-void	draw_background(t_map *data)
-{
-	int i;
-
-	i = 0;
-	while (i < WIN_WIDTH * WIN_HEIGHT * 4)
-	{
-		data->p.buff[i] = (char)32;
-		data->p.buff[i + 1] = (char)32;
-		data->p.buff[i + 2] = (char)32;
-		i += 4;
-	}
 }
 
 static int	ft_key(int key, t_map *data)
@@ -184,14 +167,13 @@ void		display_map(t_map *data)
 	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
 }
 
- */
+
 int		fdf(int fd, char *map)
 {
 	t_map		data;
 
 	ft_bzero(&data, sizeof(t_map));
-	find_xy(fd, map, &data);
-/* 	if (!(data.p.mlx = mlx_init()))
+	if (!(data.p.mlx = mlx_init()))
 		return (0);
 	data.p.win = mlx_new_window(data.p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
 	data.p.image = mlx_new_image(data.p.mlx, WIN_WIDTH, WIN_HEIGHT);
@@ -201,7 +183,8 @@ int		fdf(int fd, char *map)
 	data.offset_y = 300;
 	data.offset_x = 300;
 	data.zoom = 10;
-	mlx_loop(data.p.mlx); */
+	find_xy(fd, map, &data);
+	mlx_loop(data.p.mlx);
 	return (0);
 }
 

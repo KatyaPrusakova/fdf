@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 11:55:23 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/06 18:39:46 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/06 19:18:12 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	add_to_malloc_array(char *map, int fd, t_map *data)
 		free(map);
 	}
 	print_map(0, 0, data);
-	/* display_map(data); */
+display_map(data);
 	return (0);
 }
 
@@ -78,14 +78,17 @@ int		find_xy(int fd, char *argv, t_map *data)
 		{
 			if (ft_isdigit(m[i]))
 				j++;
-			i++;
+			while (ft_isdigit(m[i]))
+					i++;
+			if (m[i])
+				i++;
 		}
 		data->y++;
 		free(m);
 	}
 	data->x = j;
 	close(fd);
-	fd = open(argv, O_RDONLY);
+	fd = open(argv, O_RDONLY); // proooootect
 	add_to_malloc_array(m, fd, data);
 	return (1);
 }
