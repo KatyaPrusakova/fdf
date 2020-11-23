@@ -6,12 +6,11 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 11:55:23 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/06 18:39:46 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/23 14:31:04 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-
 
 void	print_map(int j, int i, t_map *data)
 {
@@ -59,7 +58,7 @@ int	add_to_malloc_array(char *map, int fd, t_map *data)
 		free(map);
 	}
 	print_map(0, 0, data);
-	/* display_map(data); */
+	manage_drawing(data);
 	return (0);
 }
 
@@ -78,7 +77,8 @@ int		find_xy(int fd, char *argv, t_map *data)
 		{
 			if (ft_isdigit(m[i]))
 				j++;
-			i++;
+
+		i++;
 		}
 		data->y++;
 		free(m);

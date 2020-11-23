@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/06 18:40:04 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/23 14:28:42 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@
 # define WIN_WIDTH	1000
 #define MAX1(a, b) (a > b ? a : b)
 #define MOD(a) (a < 0 ? -a : a)
-
-
 
 # define Z_IN	27
 # define Z_OUT	24
@@ -73,18 +71,21 @@ typedef	struct		s_map
 
 
 
-int		fdf(int fd, char *map);
-int		find_xy(int fd, char *argv, t_map *data);
+int				fdf(int fd, char *map);
+int				find_xy(int fd, char *argv, t_map *data);
 
-int		open_map(t_map *data);
-void	display_map(t_map *data);
-void	print_map(int j, int i, t_map *data);
-
-
-int		add_to_malloc_array(char *map, int fd, t_map *data);
+int				open_map(t_map *data);
+void			print_map(int j, int i, t_map *data);
 
 
-void		manage_drawing(t_map *data);
+int				add_to_malloc_array(char *map, int fd, t_map *data);
+
+
+void			manage_drawing(t_map *data);
+
+int				loop_it(t_map *data);
+
+
 #endif
 
 
