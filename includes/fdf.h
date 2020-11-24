@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/23 14:28:42 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/24 11:01:11 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int				add_to_malloc_array(char *map, int fd, t_map *data);
 
 
 void			manage_drawing(t_map *data);
-
+void			display_map(t_map *data);
 int				loop_it(t_map *data);
 
 

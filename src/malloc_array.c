@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 11:55:23 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/23 14:31:04 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/24 11:33:40 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,8 @@ int		find_xy(int fd, char *argv, t_map *data)
 		{
 			if (ft_isdigit(m[i]))
 				j++;
-
+			while (ft_isdigit(m[i]))
+					i++;
 		i++;
 		}
 		data->y++;
