@@ -20,10 +20,7 @@
 # include <fcntl.h>
 # include <mlx.h>
 # include <math.h>
-
 # include "../libft/libft.h"
-
-
 
 # define BUF 1000
 # define WIN_HEIGHT	1000
@@ -39,6 +36,8 @@
 # define DOWN	125
 # define RIGHT	124
 # define LEFT	123
+# define Q		12
+# define W		13
 
 typedef	struct		s_mlx
 {
@@ -68,6 +67,7 @@ typedef	struct		s_map
 	int			offset_x;
 	int			offset_y;
 	int			zoom;
+	int			projection;
 	t_mlx		p;
 	t_point		*point;
 }					t_map;
@@ -86,5 +86,8 @@ int		add_to_malloc_array(char *map, int fd, t_map *data);
 
 
 void		manage_drawing(t_map *data);
+
+int			loop_it(t_map *data);
+
 #endif
 

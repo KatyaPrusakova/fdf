@@ -12,7 +12,7 @@
 
 #include "fdf.h"
 
-int	add_to_malloc_array(char *map, int fd, t_map *data)
+int			add_to_malloc_array(char *map, int fd, t_map *data)
 {
 	int		i = 0;
 	int		j = 0;
@@ -32,7 +32,7 @@ int	add_to_malloc_array(char *map, int fd, t_map *data)
 		{
 			if (ft_isdigit(map[len]))
 			{
-				data->map[j][i] = ft_atoi(&map[len-1]);
+				data->map[j][i] = len ? ft_atoi(&map[len-1]) : ft_atoi(&map[len]);
 				i++;
 				while (ft_isdigit(map[len+1]))
 					len++;
@@ -43,11 +43,11 @@ int	add_to_malloc_array(char *map, int fd, t_map *data)
 		free(map);
 	}
 	print_map(0, 0, data);
-display_map(data);
+	manage_drawing(data);
 	return (0);
 }
 
-int		find_xy(int fd, char *argv, t_map *data)
+int			find_xy(int fd, char *argv, t_map *data)
 {
 	char	*m;
 	int		i;
@@ -64,15 +64,14 @@ int		find_xy(int fd, char *argv, t_map *data)
 				j++;
 			while (ft_isdigit(m[i]))
 					i++;
-			if (m[i])
-				i++;
+		i++;
 		}
 		data->y++;
 		free(m);
 	}
 	data->x = j;
 	close(fd);
-	fd = open(argv, O_RDONLY); // proooootect
+	fd = open(argv, O_RDONLY);
 	add_to_malloc_array(m, fd, data);
 	return (1);
 }
