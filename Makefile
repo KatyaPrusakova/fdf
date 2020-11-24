@@ -16,12 +16,12 @@ LIBFT = ./libft
 LIBFTFLAGS= -L ./minilibx -lmlx -L$(LIBFT) -lft
 DIR_SRC = src
 DIR_OBJ = obj_dir
-HEADER = includes/
+HEADER = -I includes/ -I minilibx2/
 FRAMEWORK = -framework OpenGL -framework AppKit
 # MLX=-I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL \
 # -framework Appkit
 
-SRC =	fdf.c main.c
+SRC =	fdf.c main.c malloc_array.c
 
 YELLOW = "\033[1;33m"
 NOCOLOR = "\033[0m"
@@ -31,19 +31,18 @@ OBJS = $(addprefix $(DIR_OBJ)/, $(SRC:.c=.o))
 
 all: $(NAME)
 
-$(NAME): $(DIR_OBJ) $(OBJS) $(SRCS)
+$(NAME): $(DIR_OBJ) $(OBJS) 
 	@echo $(YELLOW)Compiling FDF...$(NOCOLOR)
 	@make -C $(LIBFT)
-	@gcc -g $(DIR_OBJ)/*.o libft/libft.a -L /usr/local/lib \
-	-lmlx -framework OpenGL -framework Appkit -o $(NAME)
+	@gcc -g $(HEADER) fdf.o main.o malloc_array.o libft/libft.a -L /usr/local/lib -lmlx -I /usr/local/X11/include -L/usr/X11/lib -lX11 -lXext -framework OpenGL -framework Appkit -o $(NAME)
 
 
 $(DIR_OBJ):
 	@echo $(YELLOW)Compiling to .o files...$(NOCOLOR)
 	@mkdir $(DIR_OBJ)
 
-$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c $(HEADER)
-	@gcc -g -Wall -Wextra -Werror -I$(HEADER) -c -o $@ $<
+$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c
+	@gcc -Wall -Wextra -Werror  -c $(SRCS) $(HEADER)
 
 clean:
 	@echo $(YELLOW)Cleaning...$(NOCOLOR)

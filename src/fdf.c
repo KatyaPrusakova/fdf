@@ -12,197 +12,228 @@
 
 #include "fdf.h"
 
-static	void	print_map(int j, int i, t_map *data)
-{
-	int x;
+static	int loop_it(t_map *data);
+void display_map(t_map *data);
 
-	x = 0;
-	while (j < data->y)
-	{
-		i = 0;
-		while (i < data->x[x])
-		{
-			printf("%d ", data->map[j][i]);
-			i++;
-		}
-		printf("\n");
-		j++;
-		x++;
-	}
+void		manage_drawing(t_map *data)
+{
+	ft_bzero(data->p.buff, WIN_HEIGHT * WIN_WIDTH * 4);
+	loop_it(data);
+	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
 }
 
-static int	ft_key(int key)
+static int	ft_key(int key, t_map *data)
 {
 	ft_putnbr(key);
 	printf("\n");
 
 	if (key == 53)
 		exit(0);
-	return (0);
-}
-
-static int	ft_key_mouse(int key, t_map *data)
-{
-	ft_putnbr(key);
-	printf("\n");
-
-	data->r = data->r + 0;
-	if (key == 5) /* mouse zoom in (re drawing ) */
-		printf("\n");
-	if (key == 4) /* mouse zoom out (re drawing ) */
-		printf("\n");
-	return (0);
-}
-
-static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
-{
-	float k;
-	float y;
-	float start_x = 400;
-	float start_y = 400;
-	float new_x = start_x;
-	float new_y = start_y;
-
-	end_x = start_x + end_x;
- 	end_y = start_y + end_y * -1;
-
-	y = start_y;
-	new_x = end_x - start_x;
-	new_y = end_y - start_y;
-	k = new_x / new_y;
-
-	while (start_x < end_x)
+	if (key == DOWN)
 	{
-		mlx_pixel_put(mlx, win, start_x, start_y, 0x00FF00);
-		/* printf("%f %f \n", start_x, start_y); */
-		start_y = start_y + k;
-		start_x++;
+
+		data->offset_y += 20;
 	}
+	if (key == RIGHT)
+		{
+		data->offset_x += 20;
+
+	}
+	if (key == LEFT)
+	{
+		data->offset_x -= 20;
+
+	}
+	if (key == UP)
+	{
+
+		data->offset_y -= 20;
+	}
+	if (key == 27)
+	{
+		if (data->zoom == 10)
+			return (0);
+		data->zoom -= 10;
+	}
+	if (key == 24)
+		data->zoom += 10;
+	manage_drawing(data);
 	return (0);
 }
 
-static	int	get_new_xyz(t_map *data)
+ static	void	adding_3d( float *x, float *y, int z, float angle)
 {
-	/* draw_line(p.mlx, p.win, data->x[x], s); */
+	*x = (*x - *y) * cos(angle);
+	*y = (*x + *y) * sin(angle) - z;
 }
 
-static	int	open_map(t_map *data)
+static	void	zoom_in( float *x, float *y, float *x1, float *y1, t_map *data)
 {
-	t_mlx	p;
-
-	data->r = data->r + 0;
-	ft_bzero(&p, sizeof(t_mlx));
-	if (!(p.mlx = mlx_init()))
-		return (0);
-	p.win = mlx_new_window(p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
-
-	mlx_key_hook(p.win, &ft_key, data);
-	mlx_mouse_hook(p.win, &ft_key_mouse, data);
-
-	get_new_xyz(data);
-
-	mlx_loop(p.mlx);
-	return (0);
+	*x *= data->zoom;
+	*y *= data->zoom;
+	*x1 *= data->zoom;
+	*y1 *= data->zoom;
 }
 
-static	int	add_to_malloc_array(char *map, int ret, int fd, t_map *data)
+void		pixel_put(t_map *data, int x, int y, int color)
 {
-	int		i = 0;
-	int		j = 0;
+	int r;
+	int g;
+	int b;
+
+	if (x <= 0 || y <= 0 || WIN_WIDTH <= x || WIN_HEIGHT <= y)
+		return ;
+	b = color % 256;
+	g = color / 256 % 256;
+	r = color / 256 / 256 % 256;
+	data->p.buff[x * 4 + y * data->p.size_line] = r;
+	data->p.buff[x * 4 + y * data->p.size_line + 1] = g;
+	data->p.buff[x * 4 + y * data->p.size_line + 2] = b;
+}
+
+static	int	draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
+{
+	float	max;
+	float	step_x;
+	float	step_y;
+	int		color;
+
+	color = data->z ? 0xe80c0c : 0x00FF00;
+	step_x = x1 - x;
+	step_y = y1 - y;
+	max = MAX1(MOD(step_x), MOD(step_y));
+	step_x /= max;
+	step_y /=max;
+	while ((int)(x - x1) || (int)(y - y1))
+	{
+		pixel_put(data, x, y, color);
+		x += step_x;
+		y += step_y;
+	}
+	return (1);
+}
 
 
-	if (!(data->map = (int**)malloc(sizeof(int*) * (data->y))))
-		return (0);
-	while (j < data->y)
-		data->map[j++] = (int*)malloc(sizeof(int) * data->x[i++]);
+static	void	draw_line_pixel_change(t_map *data, float x, float y, float x1, float y1)
+{
+	zoom_in(&x, &y, &x1, &y1, data);
+	adding_3d(&x, &y, data->z, 0.8);
+	adding_3d(&x1, &y1, data->z1, 0.8);
+	x += data->offset_x;
+	y += data->offset_y;
+	x1 += data->offset_x;
+	y1 += data->offset_y;
+
+	draw_line_pixel(data, x, y, x1, y1);
+}
+static	int loop_it(t_map *data)
+{
+	int i;
+	int j;
+
 	j = 0;
-	while ((ret = get_next_line(fd, &map)) > 0)
+	while (j < data->y)
 	{
 		i = 0;
-		data->r = 0;
-		while (map[i] != '\0')
+		while (i < data->x)
 		{
-			if (ft_isdigit(map[i]))
+			if (i+1 < data->x)
 			{
-				data->map[j][data->r] = ft_atoi(&map[i]);
-				data->r++;
-				while (ft_isdigit(map[i+1]))
-					i++;
+				data->z = data->map[(int)j][(int)i];
+				data->z1 = data->map[(int)j][(int)i + 1];
+				draw_line_pixel_change(data, i, j, i+1, j);
+			}
+			if (j+1 < data->y)
+			{
+				data->z = data->map[(int)j][(int)i];
+				data->z1 = data->map[(int)j+1][(int)i];
+				draw_line_pixel_change(data, i, j, i, j+1);
 			}
 			i++;
 		}
 		j++;
 	}
-	open_map(data);
-	print_map(0, 0, data);
 	return (0);
 }
 
-static int		find_xy(int fd, char *argv, t_map *data)
+void mlx_info_display(t_map *data)
 {
-	char	*m;
-	int		ret;
-	int		i;
-	int		j;
-
-	m = argv;
-	while ((ret = get_next_line(fd, &m)) > 0)
-	{
-		j = 0;
-		i = 0;
-		while (m[i] != '\0')
-		{
-			if (ft_isdigit(m[i]))
-			{
-				j++;
-				while (ft_isdigit(m[i+1]))
-					i++;
-			}
-			i++;
-		}
-		data->x[data->y] = j;
-		data->y++;
-	}
-	close(fd);
-	fd = open(argv, O_RDONLY);
-	add_to_malloc_array(m, 0, fd, data);
-	return (1);
+	mlx_string_put(data->p.mlx, data->p.win, 250, 20, 0xFFFFFF,"Look at this amazing project");
 }
 
-
-/*
-static void		find_y(int fd, t_malloc *data)
+void		display_map(t_map *data)
 {
-	int		ret;
-
-	ret = 0;
-	while (ret == get_next_line(fd, data->map))
-	{
-		printf("y loop %d %d\n", data->y, ret);
-		data->y++;
-	}
-	printf("find y %d %s\n", data->y, data->map[data->y]);
+	loop_it(data);
+	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
 }
- */
+
 
 int		fdf(int fd, char *map)
 {
-	int			j;
-	int			i;
-	t_map	data;
+	t_map		data;
 
-	i = 0;
-	j = 0;
 	ft_bzero(&data, sizeof(t_map));
+	if (!(data.p.mlx = mlx_init()))
+		return (0);
+	data.p.win = mlx_new_window(data.p.mlx, WIN_WIDTH, WIN_HEIGHT, "FDF PROJECT");
+	data.p.image = mlx_new_image(data.p.mlx, WIN_WIDTH, WIN_HEIGHT);
+	data.p.buff = mlx_get_data_addr(data.p.image, &data.p.bits_per_pixel, &data.p.size_line, &data.p.endian);
+	mlx_key_hook(data.p.win, &ft_key, &data);
+	mlx_info_display(&data);
+	data.offset_y = 300;
+	data.offset_x = 300;
+	data.zoom = 10;
 	find_xy(fd, map, &data);
-/* 	find_y(fd, data); */
-
+	mlx_loop(data.p.mlx);
 	return (0);
 }
 
+/*
+static int	ft_key_mouse(int key)
+{
+	ft_putnbr(key);
+	printf("\n");
+	if (key == 1)
+		return (1);
+	if (key == 1)
+		return (2);
+	if (key == 5)
+		printf("\n");
+	if (key == 4)
+		printf("\n");
+	return (0);
+}
+ */
 
-	/* while (map[i] != '\0')
+/*
+static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
+{
+	int start_x = 400;
+	int start_y = 400;
+	int new_x = start_x;
+	int new_y = start_y;
+	void *image = mlx_new_image(mlx, new_x, new_y);
+	end_x = start_x + end_x;
+ 	end_y = start_y + end_y;
+	int pixel_bits;
+	int line_pixels;
+	int endian;
+	int color = 0xABCDEF;
+	char *buffer = mlx_get_data_addr(image, &pixel_bits, &line_pixels, &endian);
+	while (start_y < end_y)
 	{
-		i++;
-		printf("first step %d %s\n", i, map);
-	} */
+		while ( start_x < end_x)
+			{
+				int pixel = (start_y * line_pixels) + (start_x * 4);
+				buffer[pixel + 0] = (color) & 0xFF;
+				buffer[pixel + 1] = (color >> 8) & 0xFF;
+				buffer[pixel + 2] = (color >> 16) & 0xFF;
+				buffer[pixel + 3] = (color >> 24);
+				++start_x;
+			}
+		++start_y;
+	}
+	mlx_put_image_to_window(mlx, win, image, 400, 400);
+	return (0);
+}
+ */

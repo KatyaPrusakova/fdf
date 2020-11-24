@@ -20,7 +20,7 @@ int		main(int argc, char **argv)
 	{
 		fd = open(argv[1], O_RDONLY);
 		fdf(fd, argv[1]);
-		system("leaks fdf");
+		
 	}
 	else
 	{
