@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/24 11:26:25 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/24 11:54:33 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ static int	ft_key(int key, t_map *data)
 		data->offset_x -= 20;
 	if (key == UP)
 		data->offset_y -= 20;
+
+ 	if (key == Q)
+		data->projection = 1;
+	if (key == W)
+		data->projection = 0;
 	if (key == 27)
 	{
 		if (data->zoom == 10)
@@ -83,7 +88,8 @@ int			draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 	float	step_y;
 	int		color;
 
-	color = data->z ? 0xe80c0c : 0x00FF00;
+	color = data->z || data->z1 ? 0xe80c0c : 0x00FF00;
+
 	step_x = x1 - x;
 	step_y = y1 - y;
 	max = MAX1(MOD(step_x), MOD(step_y));
@@ -101,8 +107,11 @@ int			draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 void			draw_line_pixel_change(t_map *data, float x, float y, float x1, float y1)
 {
 	zoom_in(&x, &y, &x1, &y1, data);
-	/* adding_3d(&x, &y, data->z, 0.8);
-	adding_3d(&x1, &y1, data->z1, 0.8); */
+
+	if (!data->projection) {
+		adding_3d(&x, &y, data->z, 0.8);
+		adding_3d(&x1, &y1, data->z1, 0.8);
+	}
 	x += data->offset_x;
 	y += data->offset_y;
 	x1 += data->offset_x;
@@ -161,7 +170,7 @@ int		fdf(int fd, char *map)
 	find_xy(fd, map, &data);
 	data.offset_y = 300;
 	data.offset_x = 300;
-	data.zoom = 100;
+	data.zoom = 10;
 	manage_drawing(&data);
 	mlx_loop(data.p.mlx);
 	return (0);

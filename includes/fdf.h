@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/24 11:01:11 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/24 11:45:01 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@
 # define DOWN	125
 # define RIGHT	124
 # define LEFT	123
+# define Q		12
+# define W		13
 
 typedef	struct		s_mlx
 {
@@ -65,6 +67,7 @@ typedef	struct		s_map
 	int			offset_x;
 	int			offset_y;
 	int			zoom;
+	int			projection;
 	t_mlx		p;
 	t_point		*point;
 }					t_map;
