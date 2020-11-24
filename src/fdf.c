@@ -89,7 +89,6 @@ int			draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 	int		color;
 
 	color = data->z || data->z1 ? 0xe80c0c : 0x00FF00;
-
 	step_x = x1 - x;
 	step_y = y1 - y;
 	max = MAX1(MOD(step_x), MOD(step_y));
