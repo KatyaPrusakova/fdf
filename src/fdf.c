@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/25 11:19:56 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/25 11:28:59 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void		manage_drawing(t_map *data)
 	display_image(data);
 	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
 }
+
 
 int			ft_key(int key, t_map *data)
 {
