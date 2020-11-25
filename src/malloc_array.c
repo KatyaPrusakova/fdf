@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 11:55:23 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/24 11:33:40 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/25 11:07:56 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,15 @@ void	print_map(int j, int i, t_map *data)
 	}
 }
 
-int	add_to_malloc_array(char *map, int fd, t_map *data)
+int			add_to_malloc_array(char *map, int fd, t_map *data)
 {
-	int		i = 0;
-	int		j = 0;
-	int		len = 0;
+	int		i;
+	int		j;
+	int		len;
 
-
+	i = 0;
+	j = 0;
+	len = 0;
 	if (!(data->map = (int**)ft_memalloc(sizeof(int*) * (data->y))))
 		return (0);
 	while (j < data->y)
@@ -47,9 +49,9 @@ int	add_to_malloc_array(char *map, int fd, t_map *data)
 		{
 			if (ft_isdigit(map[len]))
 			{
-				data->map[j][i] = ft_atoi(&map[len-1]);
+				data->map[j][i] = len ? ft_atoi(&map[len - 1]) : ft_atoi(&map[len]);
 				i++;
-				while (ft_isdigit(map[len+1]))
+				while (ft_isdigit(map[len + 1]))
 					len++;
 			}
 			len++;
@@ -78,8 +80,8 @@ int		find_xy(int fd, char *argv, t_map *data)
 			if (ft_isdigit(m[i]))
 				j++;
 			while (ft_isdigit(m[i]))
-					i++;
-		i++;
+				i++;
+			i++;
 		}
 		data->y++;
 		free(m);
