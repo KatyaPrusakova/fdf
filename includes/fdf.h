@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:39:10 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/25 11:15:12 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/25 13:17:57 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@
 # define LEFT	123
 # define Q		12
 # define W		13
+# define X		7
+# define Y		16
+# define Z		6
 
 typedef	struct		s_mlx
 {
@@ -50,8 +53,17 @@ typedef	struct		s_point
 {
 	float			x;
 	float			y;
-	float			z;
+	float			x1;
+	float			y1;
 }					t_point;
+
+typedef	struct		s_pix
+{
+	float			x;
+	float			y;
+	float			x1;
+	float			y1;
+}					t_pix;
 
 typedef	struct		s_map
 {
@@ -64,8 +76,11 @@ typedef	struct		s_map
 	int			offset_y;
 	int			zoom;
 	int			projection;
+	float		angle;
+	int			rotation;
 	t_mlx		p;
-	t_point		*point;
+	t_point		c;
+	t_pix		print;
 }					t_map;
 
 int				fdf(int fd, char *map);
@@ -74,6 +89,5 @@ int				open_map(t_map *data);
 void			print_map(int j, int i, t_map *data);
 int				add_to_malloc_array(char *map, int fd, t_map *data);
 void			manage_drawing(t_map *data);
-void			display_map(t_map *data);
 void			display_image(t_map *data);
 #endif

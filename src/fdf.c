@@ -6,7 +6,7 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/25 11:28:59 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/25 13:56:53 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,8 @@ void		manage_drawing(t_map *data)
 	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
 }
 
-
-int			ft_key(int key, t_map *data)
+void			up_down_right_left(int key, t_map *data)
 {
-	if (key == 53)
-	{
-		system("leaks fdf");
-		exit(0);
-	}
 	if (key == DOWN)
 		data->offset_y += 20;
 	if (key == RIGHT)
@@ -35,6 +29,14 @@ int			ft_key(int key, t_map *data)
 		data->offset_x -= 20;
 	if (key == UP)
 		data->offset_y -= 20;
+}
+
+int			ft_key(int key, t_map *data)
+{
+	if (key == 53)
+		exit(0);
+	if (key == DOWN || key == RIGHT || key == LEFT || key == UP)
+		up_down_right_left(key, data);
 	if (key == Q)
 		data->projection = 1;
 	if (key == W)
@@ -47,6 +49,8 @@ int			ft_key(int key, t_map *data)
 	}
 	if (key == 24)
 		data->zoom += 10;
+	if (key == X || key == Y || key == Z)
+		data->rotation = key;
 	manage_drawing(data);
 	return (0);
 }
@@ -57,12 +61,20 @@ void	adding_3d(float *x, float *y, int z, float angle)
 	*y = (*x + *y) * sin(angle) - z;
 }
 
-void	zoom_in(float *x, float *y, float *x1, float *y1, t_map *data)
+void		rotate(float *x, float *y, t_map *data)
 {
-	*x *= data->zoom;
-	*y *= data->zoom;
-	*x1 *= data->zoom;
-	*y1 *= data->zoom;
+	float temp;
+
+		temp = *y;
+		
+		*y = *y * cos(data->angle_x) + data->z * sin(data->angle_x);
+		data->z = (-1 * temp) * sin(data->angle) + data->z * cos(data->angle_x);
+
+		*x = *x * cos(data->angle) + data->z * sin(data->angle_y);
+		data->z = (-1 * *x) * sin(data->angle) + data->z * cos(data->angle);
+
+		*x = *x * cos(data->angle) - *y * sin(data->angle_z);
+		*y = *x * sin(data->angle) + *y * cos(data->angle);
 }
 
 void		pixel_put(t_map *data, int x, int y, int color)
@@ -81,7 +93,7 @@ void		pixel_put(t_map *data, int x, int y, int color)
 	data->p.buff[x * 4 + y * data->p.size_line + 2] = b;
 }
 
-int			draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
+int			draw_line_pixel(t_map *data)
 {
 	float	max;
 	float	step_x;
@@ -89,61 +101,79 @@ int			draw_line_pixel(t_map *data, float x, float y, float x1, float y1)
 	int		color;
 
 	color = data->z || data->z1 ? 0xe80c0c : 0x00FF00;
-	step_x = x1 - x;
-	step_y = y1 - y;
+	step_x = data->print.x1 - data->print.x;
+	step_y = data->print.y1 - data->print.y;
 	max = MAX1(MOD(step_x), MOD(step_y));
 	step_x /= max;
 	step_y /= max;
-	while ((int)(x - x1) || (int)(y - y1))
+	while ((int)(data->print.x - data->print.x1) || \
+	(int)(data->print.y - data->print.y1))
 	{
-		pixel_put(data, x, y, color);
-		x += step_x;
-		y += step_y;
+		pixel_put(data, data->print.x, data->print.y, color);
+		data->print.x += step_x;
+		data->print.y += step_y;
 	}
 	return (1);
 }
 
-void			draw_line_pixel_change(t_map *data, float x, float y, float x1, float y1)
+void	zoom_in(t_map *data)
 {
-	zoom_in(&x, &y, &x1, &y1, data);
+	data->print.x *= data->zoom;
+	data->print.y *= data->zoom;
+	data->print.x1 *= data->zoom;
+	data->print.y1 *= data->zoom;
+}
+
+void			resize_img(t_map *data)
+{
+	data->print.x = data->c.x;
+	data->print.y = data->c.y;
+	data->print.x1 = data->c.x1;
+	data->print.y1 = data->c.y1;
+	zoom_in(data);
 	if (!data->projection)
 	{
-		adding_3d(&x, &y, data->z, 0.8);
-		adding_3d(&x1, &y1, data->z1, 0.8);
+		adding_3d(&data->print.x, &data->print.y, data->z, data->angle);
+		adding_3d(&data->print.x1, &data->print.y1, data->z1, data->angle);
 	}
-	x += data->offset_x;
-	y += data->offset_y;
-	x1 += data->offset_x;
-	y1 += data->offset_y;
-	draw_line_pixel(data, x, y, x1, y1);
+	if (data->rotation)
+	{
+		rotate(&data->print.x, &data->print.y, data);
+		rotate(&data->print.x1, &data->print.y1, data);
+	}
+	data->print.x += data->offset_x;
+	data->print.y += data->offset_y;
+	data->print.x1 += data->offset_x;
+	data->print.y1 += data->offset_y;
+	draw_line_pixel(data);
 }
 
 void			display_image(t_map *data)
 {
-	int		i;
-	int		j;
-
-	j = 0;
-	while (j < data->y)
+	data->c.y = 0;
+	while (data->c.y < data->y)
 	{
-		i = 0;
-		while (i < data->x)
+		data->c.x = 0;
+		while (data->c.x < data->x)
 		{
-			if (i + 1 < data->x)
+			data->z = data->map[(int)data->c.y][(int)data->c.x];
+			if (data->c.x + 1 < data->x)
 			{
-				data->z = data->map[(int)j][(int)i];
-				data->z1 = data->map[(int)j][(int)i + 1];
-				draw_line_pixel_change(data, i, j, i + 1, j);
+				data->c.x1 = data->c.x + 1;
+				data->c.y1 = data->c.y;
+				data->z1 = data->map[(int)data->c.y][(int)data->c.x1];
+				resize_img(data);
 			}
-			if (j + 1 < data->y)
+			if (data->c.y + 1 < data->y)
 			{
-				data->z = data->map[(int)j][(int)i];
-				data->z1 = data->map[(int)j + 1][(int)i];
-				draw_line_pixel_change(data, i, j, i, j + 1);
+				data->c.x1 = data->c.x;
+				data->c.y1 = data->c.y + 1;
+				data->z1 = data->map[(int)data->c.y1][(int)data->c.x];
+				resize_img(data);
 			}
-			i++;
+			data->c.x++;
 		}
-		j++;
+		data->c.y++;
 	}
 }
 
@@ -170,6 +200,8 @@ int				fdf(int fd, char *map)
 	data.offset_y = 300;
 	data.offset_x = 300;
 	data.zoom = 10;
+	data.angle = 0.8;
+	data.rotation = 0;
 	manage_drawing(&data);
 	mlx_loop(data.p.mlx);
 	return (0);
