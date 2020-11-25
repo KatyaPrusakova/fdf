@@ -6,11 +6,14 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 11:38:49 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/25 11:19:56 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/11/25 11:24:38 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+static	int loop_it(t_map *data);
+void display_map(t_map *data);
 
 void		manage_drawing(t_map *data)
 {
@@ -19,8 +22,11 @@ void		manage_drawing(t_map *data)
 	mlx_put_image_to_window(data->p.mlx, data->p.win, data->p.image, 0, 0);
 }
 
-int			ft_key(int key, t_map *data)
+static int	ft_key(int key, t_map *data)
 {
+	ft_putnbr(key);
+	printf("\n");
+
 	if (key == 53)
 	{
 		system("leaks fdf");
@@ -152,7 +158,8 @@ void			mlx_info_display(t_map *data)
 	"Look at this amazing project");
 }
 
-int				fdf(int fd, char *map)
+
+int		fdf(int fd, char *map)
 {
 	t_map		data;
 
@@ -169,7 +176,65 @@ int				fdf(int fd, char *map)
 	data.offset_y = 300;
 	data.offset_x = 300;
 	data.zoom = 10;
-	manage_drawing(&data);
+	find_xy(fd, map, &data);
 	mlx_loop(data.p.mlx);
+	return (0);
+}
+
+/*
+static int	ft_key_mouse(int key)
+{
+	ft_putnbr(key);
+	printf("\n");
+
+	if (key == 1)
+		return (1);
+	if (key == 1)
+		return (2);
+	if (key == 5)
+		printf("\n");
+	if (key == 4)
+		printf("\n");
+
+	return (0);
+}
+ */
+
+/*
+static	int	draw_line(void *mlx, void *win, float end_x, float end_y)
+{
+
+	int start_x = 400;
+	int start_y = 400;
+	int new_x = start_x;
+	int new_y = start_y;
+
+	void *image = mlx_new_image(mlx, new_x, new_y);
+	end_x = start_x + end_x;
+ 	end_y = start_y + end_y;
+
+	int pixel_bits;
+	int line_pixels;
+	int endian;
+	int color = 0xABCDEF;
+
+	char *buffer = mlx_get_data_addr(image, &pixel_bits, &line_pixels, &endian);
+
+	while (start_y < end_y)
+	{
+		while ( start_x < end_x)
+			{
+				int pixel = (start_y * line_pixels) + (start_x * 4);
+
+				buffer[pixel + 0] = (color) & 0xFF;
+				buffer[pixel + 1] = (color >> 8) & 0xFF;
+				buffer[pixel + 2] = (color >> 16) & 0xFF;
+				buffer[pixel + 3] = (color >> 24);
+				++start_x;
+			}
+		++start_y;
+	}
+	mlx_put_image_to_window(mlx, win, image, 400, 400);
+
 	return (0);
 }
