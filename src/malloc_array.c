@@ -6,69 +6,58 @@
 /*   By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 11:55:23 by eprusako          #+#    #+#             */
-/*   Updated: 2020/11/25 11:25:03 by eprusako         ###   ########.fr       */
+/*   Updated: 2020/12/01 12:11:54 by eprusako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	print_map(int j, int i, t_map *data)
-{
-	while (j < data->y)
-	{
-		i = 0;
-		while (i < data->x)
-		{
-			printf("%d ", data->map[j][i]);
-			i++;
-		}
-		printf("\n");
-		j++;
-	}
-}
-
-int			add_to_malloc_array(char *map, int fd, t_map *data)
+void		ft_malloc_it(t_map *d)
 {
 	int		i;
 	int		j;
-	int		len;
 
 	i = 0;
 	j = 0;
-	len = 0;
-	if (!(data->map = (int**)ft_memalloc(sizeof(int*) * (data->y))))
-		return (0);
-	while (j < data->y)
-		data->map[j++] = (int*)ft_memalloc(sizeof(int) * data->x);
+	if (!(d->map = (int**)ft_memalloc(sizeof(int*) * (d->y))))
+		print_error(3);
+	while (j < d->y)
+		d->map[j++] = (int*)ft_memalloc(sizeof(int) * d->x);
+}
+
+void		add_to_malloc_array(char *m, int len, int fd, t_map *d)
+{
+	int		i;
+	int		j;
+
+	i = 0;
 	j = 0;
-	while (get_next_line(fd, &map) > 0)
+	ft_malloc_it(d);
+	while (get_next_line(fd, &m) > 0)
 	{
 		i = 0;
 		len = 0;
-		while (map[len] != '\0')
+		while (m[len] != '\0')
 		{
-			if (ft_isdigit(map[len]))
+			if (ft_isdigit(m[len]))
 			{
-				data->map[j][i] = len ? ft_atoi(&map[len - 1]) : ft_atoi(&map[len]);
+				d->map[j][i] = len ? ft_atoi(&m[len - 1]) : ft_atoi(&m[len]);
 				i++;
-				while (ft_isdigit(map[len + 1]))
+				while (ft_isdigit(m[len + 1]))
 					len++;
 			}
 			len++;
 		}
 		j++;
-		free(map);
+		free(m);
 	}
-	print_map(0, 0, data);
-display_map(data);
-	return (0);
+	manage_drawing(d);
 }
 
-int		find_xy(int fd, char *argv, t_map *data)
+void		find_xy(int fd, int j, char *argv, t_map *d)
 {
 	char	*m;
 	int		i;
-	int		j;
 
 	m = argv;
 	while (get_next_line(fd, &m) > 0)
@@ -80,16 +69,42 @@ int		find_xy(int fd, char *argv, t_map *data)
 			if (ft_isdigit(m[i]))
 				j++;
 			while (ft_isdigit(m[i]))
-					i++;
+				i++;
 			if (m[i])
 				i++;
 		}
-		data->y++;
+		d->y++;
 		free(m);
 	}
-	data->x = j;
+	d->x = j;
 	close(fd);
-	fd = open(argv, O_RDONLY); // proooootect
-	add_to_malloc_array(m, fd, data);
-	return (1);
+	if ((fd = open(argv, O_RDONLY)) == -1)
+		print_error(1);
+	add_to_malloc_array(m, 0, fd, d);
+}
+
+void		check_x(char *str)
+{
+	int		j;
+	int		i;
+	int		fd;
+	int		first;
+
+	first = 0;
+	i = 0;
+	if ((fd = open(str, O_RDONLY)) == -1)
+		print_error(1);
+	while (get_next_line(fd, &str) > 0)
+	{
+		if (!first)
+		{
+			i = ft_strlen(str);
+			first = 1;
+		}
+		j = ft_strlen(str);
+		free(str);
+	}
+	if (i != j)
+		print_error(3);
+	close(fd);
 }

@@ -6,48 +6,36 @@
 #    By: eprusako <eprusako@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/15 11:04:15 by eprusako          #+#    #+#              #
-#    Updated: 2020/11/06 12:01:51 by eprusako         ###   ########.fr        #
+#    Updated: 2020/12/10 13:58:03 by eprusako         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 
-LIBFT = ./libft
-LIBFTFLAGS= -L ./minilibx -lmlx -L$(LIBFT) -lft
+LIBFT = ./libft/
 DIR_SRC = src
-DIR_OBJ = obj_dir
-HEADER = includes/
-FRAMEWORK = -framework OpenGL -framework AppKit
-# MLX=-I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL \
-# -framework Appkit
+HEADER = -I includes/ -I minilibx2/
+MLX = -L /usr/local/lib -lmlx -I /usr/local/X11/include -L/usr/X11/lib -lX11 -lXext -framework OpenGL -framework Appkit
 
-SRC =	fdf.c main.c malloc_array.c
+SRC = fdf.c main.c malloc_array.c action_img.c
 
 YELLOW = "\033[1;33m"
 NOCOLOR = "\033[0m"
 
 SRCS = $(addprefix $(DIR_SRC)/, $(SRC))
-OBJS = $(addprefix $(DIR_OBJ)/, $(SRC:.c=.o))
+OBJS=$(notdir $(SRCS:.c=.o))
 
 all: $(NAME)
 
-$(NAME): $(DIR_OBJ) $(OBJS) $(SRCS)
+$(NAME):
 	@echo $(YELLOW)Compiling FDF...$(NOCOLOR)
 	@make -C $(LIBFT)
-	@gcc -g $(DIR_OBJ)/*.o libft/libft.a -L /usr/local/lib \
-	-lmlx -framework OpenGL -framework Appkit -o $(NAME)
-
-
-$(DIR_OBJ):
-	@echo $(YELLOW)Compiling to .o files...$(NOCOLOR)
-	@mkdir $(DIR_OBJ)
-
-$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c $(HEADER)
-	@gcc -g -Wall -Wextra -Werror -I$(HEADER) -c -o $@ $<
+	@gcc -Wall -Wextra -Werror -c $(SRCS) $(HEADER)
+	@gcc -g $(HEADER) $(OBJS) libft/libft.a $(MLX) -o $(NAME)
 
 clean:
 	@echo $(YELLOW)Cleaning...$(NOCOLOR)
-	@/bin/rm -rf $(DIR_OBJ)
+	@/bin/rm -rf $(OBJS)
 	@make -C $(LIBFT) clean
 
 fclean: clean
